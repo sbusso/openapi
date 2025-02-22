@@ -1,36 +1,84 @@
-name: Generate and Deploy Swagger UI
+name: Deploy Jekyll and Swagger UI to GitHub Pages
 
 on:
   push:
-    branches:
-      - main  # or your default branch
-  workflow_dispatch:  # allows manual trigger
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  generate-and-deploy:
+  # Build Jekyll site
+  build-jekyll:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Generate Swagger UI for openwebui
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build with Jekyll
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./
+          destination: ./_site
+
+      - name: Upload Jekyll site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+  # Generate Swagger UI
+  generate-swagger-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Generate Swagger UI - OpenWebUI
         uses: Legion2/swagger-ui-action@v1
         with:
-          output: openwebui/docs  # Generate directly in project directory
+          output: swagger-docs
           spec-file: openwebui/openapi.json
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Add more swagger UI generation steps for other directories here
-      # Example:
-      # - name: Generate Swagger UI - Another API
-      #   uses: Legion2/swagger-ui-action@v1
-      #   with:
-      #     output: another-directory
-      #     spec-file: another-directory/openapi.json
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Swagger UI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: swagger-docs
+          path: swagger-docs
 
-      # Deploy to GitHub Pages
+  # Deploy both Jekyll & Swagger UI to GitHub Pages
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: [build-jekyll, generate-swagger-ui]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Jekyll site artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: github-pages
+          path: public
+
+      - name: Download Swagger UI artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: swagger-docs
+          path: public/swagger-docs
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
