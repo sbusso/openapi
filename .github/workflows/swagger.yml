@@ -56,7 +56,7 @@ jobs:
           name: swagger-docs
           path: swagger-docs
 
-  # Deploy both Jekyll & Swagger UI to GitHub Pages
+  # Deploy everything to GitHub Pages
   deploy:
     environment:
       name: github-pages
@@ -64,23 +64,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-jekyll, generate-swagger-ui]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download Jekyll site artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages
-          path: public
-
-      - name: Download Swagger UI artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: swagger-docs
-          path: public/swagger-docs
-
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+        id: deployment
+        uses: actions/deploy-pages@v4
