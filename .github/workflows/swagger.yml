@@ -26,6 +26,7 @@ jobs:
         with:
           output: _site/openwebui  # Change to _site directory
           spec-file: openwebui/openapi.json
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
