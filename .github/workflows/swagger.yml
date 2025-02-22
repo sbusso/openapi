@@ -17,8 +17,8 @@ jobs:
       - name: Generate Swagger UI - OpenWebUI
         uses: Legion2/swagger-ui-action@v1
         with:
-          output: openwebui  # Generate directly in project directory
-          spec-file: openwebui/docs/openapi.json
+          output: openwebui/docs  # Generate directly in project directory
+          spec-file: openwebui/openapi.json
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Add more swagger UI generation steps for other directories here
