@@ -15,74 +15,30 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Build Jekyll site
-  build-jekyll:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@v1
-        with:
-          source: ./
-          destination: ./_site
-
-      - name: Upload Jekyll site artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./_site
-
-  # Generate Swagger UI
+  # Generate Swagger UI first
   generate-swagger-ui:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Generate Swagger UI - OpenWebUI
         uses: Legion2/swagger-ui-action@v1
         with:
-          output: docs/openwebui
+          output: _site/openwebui  # Change to _site directory
           spec-file: openwebui/openapi.json
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Swagger UI artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: docs
-          path: docs
+          path: _site
 
-  # Deploy everything to GitHub Pages
+  # Deploy to GitHub Pages
   deploy:
+    needs: generate-swagger-ui
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: [build-jekyll, generate-swagger-ui]
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download Jekyll site artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: github-pages
-          path: public
-
-      - name: Download Swagger UI artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: docs
-          path: public/docs  # Move it inside 'public'
-
-      # Disable Jekyll so GitHub Pages serves all files properly
-      - name: Disable Jekyll
-        run: touch public/.nojekyll
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
