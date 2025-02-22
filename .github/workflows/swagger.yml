@@ -28,7 +28,11 @@ jobs:
         with:
           source: ./
           destination: ./_site
-          
+ # Create directory with proper permissions
+      - name: Create Swagger UI directory
+        run: |
+          mkdir -p _site/openwebui
+          chmod 777 _site/openwebui
       - name: Generate Swagger UI - OpenWebUI
         uses: Legion2/swagger-ui-action@v1
         with:
