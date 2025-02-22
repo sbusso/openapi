@@ -46,15 +46,14 @@ jobs:
       - name: Generate Swagger UI - OpenWebUI
         uses: Legion2/swagger-ui-action@v1
         with:
-          output: swagger-docs
+          output: docs/openwebui
           spec-file: openwebui/openapi.json
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Swagger UI artifact
         uses: actions/upload-artifact@v4
         with:
-          name: swagger-docs
-          path: swagger-docs
+          path: docs
 
   # Deploy everything to GitHub Pages
   deploy:
