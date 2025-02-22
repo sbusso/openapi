@@ -1,3 +1,3 @@
-[# openapi library](https://sbusso.github.io/openapi/)
+[# OpenAPI library](https://sbusso.github.io/openapi/)
 
-- [OpenWebUI API Documentation](/openapi/openwebui/docs/)
+- [OpenWebUI API Documentation](/openapi/openwebui/)
