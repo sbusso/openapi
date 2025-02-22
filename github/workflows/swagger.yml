@@ -1,0 +1,31 @@
+name: Generate and Deploy Swagger UI
+
+on:
+  push:
+    branches:
+      - main  # or your default branch
+  workflow_dispatch:  # allows manual trigger
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Generate Swagger UI for openwebui
+      - name: Generate Swagger UI - OpenWebUI
+        uses: Legion2/swagger-ui-action@v1
+        with:
+          output: openwebui  # Generate directly in project directory
+          spec-file: openwebui/openapi.json
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Add more swagger UI generation steps for other directories here
+      # Example:
+      # - name: Generate Swagger UI - Another API
+      #   uses: Legion2/swagger-ui-action@v1
+      #   with:
+      #     output: another-directory
+      #     spec-file: another-directory/openapi.json
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
