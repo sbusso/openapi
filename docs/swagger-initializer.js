@@ -8,10 +8,7 @@ window.onload = function () {
         name: "OpenWebUI API",
         url: "https://sbusso.github.io/openapi/openwebui/openapi.json",
       },
-      {
-        name: "OpenWebUI API",
-        url: "https://sbusso.github.io/openapi/openwebui/openapi.json",
-      },
+
       // Add more API definitions here like:
       // {
       //   name: "Another API",
