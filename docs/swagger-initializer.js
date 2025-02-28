@@ -8,6 +8,10 @@ window.onload = function () {
         name: "OpenWebUI API",
         url: "https://sbusso.github.io/openapi/openwebui/openapi.json",
       },
+      {
+        name: "Portainer",
+        url: "https://sbusso.github.io/openapi/portainer/openapi.json",
+      },
 
       // Add more API definitions here like:
       // {
